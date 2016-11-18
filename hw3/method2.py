@@ -131,6 +131,7 @@ autoencoder.compile(loss='binary_crossentropy', optimizer=Adam(), metrics=['mse'
 
 
 X_train, Y_train = load_label(path_name + '/all_label.p')
+X_unlabel = load_unlabel(path_name + 'all_unlabel.p')
 # X_val, Y_val = validation(X_train, Y_train)
 
 autoencoder.fit(X_train.reshape(X_train.shape[0], 3, 32, 32), X_train.reshape(X_train.shape[0], 3, 32, 32),
@@ -143,6 +144,10 @@ autoencoder.fit(X_train.reshape(X_train.shape[0], 3, 32, 32), X_train.reshape(X_
 
 Xtrain = encoder(X_train.reshape(X_train.shape[0], 3, 32, 32))
 Xtrain = np.asarray(Xtrain[0])
+
+Xunlabel = encoder(X_unlabel.reshape(X_unlabel.shape[0], 3, 32, 32))
+Xunlabel = np.asarray(Xunlabel[0])
+
 
 # X_val = X_val.astype('float32')
 # X_val = encoder(X_val.reshape(X_val.shape[0], 3, 32, 32))
@@ -171,6 +176,16 @@ model.fit(Xtrain, Y_train,
                 nb_epoch=10,
                 batch_size=32,
                 shuffle=True)
+
+Y_unlabel = model.predict(Xunlabel, batch_size=32, verbose=1)
+
+X = np.concatenate((Xtrain, Xunlabel), axis=0)
+Y = np.concatenate((Y_train, Y_unlabel), axis=0)
+
+model.fit(X, Y,
+          nb_epoch=1,
+          batch_size=32,
+          shuffle=True)
 
 model.save(model_name)
 

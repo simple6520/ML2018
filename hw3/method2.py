@@ -131,7 +131,7 @@ autoencoder.compile(loss='binary_crossentropy', optimizer=Adam(), metrics=['mse'
 
 
 X_train, Y_train = load_label(path_name + '/all_label.p')
-X_unlabel = load_unlabel(path_name + 'all_unlabel.p')
+X_unlabel = load_unlabel(path_name + '/all_unlabel.p')
 # X_val, Y_val = validation(X_train, Y_train)
 
 autoencoder.fit(X_train.reshape(X_train.shape[0], 3, 32, 32), X_train.reshape(X_train.shape[0], 3, 32, 32),
